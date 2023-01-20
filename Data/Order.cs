@@ -1,4 +1,4 @@
-﻿namespace BlazingPizza;
+﻿namespace BlazingBooks.Data;
 
 public class Order
 {
@@ -10,9 +10,9 @@ public class Order
 
     public Address DeliveryAddress { get; set; } = new Address();
 
-    public List<Pizza> Pizzas { get; set; } = new List<Pizza>();
+    public List<Book> Books { get; set; } = new List<Book>();
 
-    public decimal GetTotalPrice() => Pizzas.Sum(p => p.GetTotalPrice());
+    public decimal GetTotalPrice() => Books.Sum(p => p.GetTotalPrice());
 
     public string GetFormattedTotalPrice() => GetTotalPrice().ToString("0.00");
 }

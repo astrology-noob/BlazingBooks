@@ -1,0 +1,71 @@
+﻿@page "/checkout"
+@inject OrderState OrderState
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject BookService BS
+
+<div class="top-bar">
+    <NavLink href=@HomePageURI Match="NavLinkMatch.All" class="logo">
+        <img src="img/logo.svg" />
+    </NavLink>
+    <NavLink href="/pizzas" Match="NavLinkMatch.Prefix" class="nav-tab">
+        <img src="img/pizza-slice.svg" />
+        <div>Get Pizza</div>
+    </NavLink>
+</div>
+
+<div class="main">
+    <div class="checkout-cols">
+        <div class="checkout-order-details">
+            <h4>Review order</h4>
+            @foreach (var book in Order.Books)
+            {
+                <p>
+                    <strong>
+                        @(book.ToOrderCount)
+                        @book.Title
+                        <span class="total-price">@book.GetFormattedTotalPrice()</span>
+                    </strong>
+                </p>
+            }
+
+            <p>
+                <strong>
+                    Итого:
+                    <span class="total-price">@Order.GetFormattedTotalPrice()</span>
+                </strong>
+            </p>
+        </div>
+    </div>
+
+    <button class="checkout-button btn btn-warning" @onclick="PlaceOrder" disabled=@IsSubmitting>
+        Place order
+    </button>
+</div>
+
+@code {
+    Order Order => OrderState.Order;
+    public string HomePageURI { get; set; }
+    bool IsSubmitting;
+
+    public async Task PlaceOrder()
+    {
+        IsSubmitting = true;
+        foreach (var bookToOrder in OrderState.Order.Books)
+        {        
+            var buyingTask= BS.BuyBooks(bookToOrder);
+            await buyingTask;
+            buyingTask.Wait();
+        }
+        //var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "orders", OrderState.Order);
+        //var newOrderId = await response.Content.ReadFromJsonAsync<int>();
+        OrderState.ResetOrder();
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        HomePageURI = NavigationManager.BaseUri;
+        return base.OnInitializedAsync();
+    }
+}

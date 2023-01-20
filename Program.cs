@@ -1,12 +1,21 @@
-using BlazingPizza;
+using BlazingBooks.Data;
+using Microsoft.EntityFrameworkCore;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
-builder.Services.AddSqlite<PizzaStoreContext>("Data Source=pizza.db");
+builder.Services.AddDbContext<AppDBContext>(options =>
+              options.UseSqlServer(
+                  builder.Configuration.GetConnectionString("AppDBContext")));
 builder.Services.AddScoped<OrderState>();
+builder.Services.AddScoped(sp =>
+{
+    var dbContext = sp.CreateScope().ServiceProvider.GetRequiredService<AppDBContext>();
+    return new BookService(dbContext);
+});
 
 var app = builder.Build();
 
@@ -27,11 +36,7 @@ app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 using (var scope = scopeFactory.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<PizzaStoreContext>();
-    if (db.Database.EnsureCreated())
-    {
-        SeedData.Initialize(db);
-    }
+    var db = scope.ServiceProvider.GetRequiredService<AppDBContext>();
 }
 
 

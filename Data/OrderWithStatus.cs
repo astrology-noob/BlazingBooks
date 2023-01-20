@@ -1,4 +1,4 @@
-﻿namespace BlazingPizza;
+﻿namespace BlazingBooks.Data;
 
 public class OrderWithStatus
 {
