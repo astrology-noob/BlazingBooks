@@ -21,12 +21,12 @@
     {
       @foreach (var book in books)
       {
-          <li @onclick="@(() => OrderState.ShowConfigureBookDialog(book))">
-          <div class="pizza-info">
-          <span class="title">@book.Title</span>
-          @book.Author
-          <span class="price">@book.GetFormattedBasePrice()</span>
-          </div>
+        <li @onclick="@(() => OrderState.ShowConfigureBookDialog(book, 0))">
+            <div class="pizza-info">
+            <span class="title">@book.Title</span>
+            @book.Author
+            <span class="price">@book.GetFormattedBasePrice()</span>
+            </div>
         </li>
       }
     }
@@ -37,6 +37,7 @@
 {
     <ConfigureBookDialog
       book="OrderState.ConfiguringBook"
+      bookCount="OrderState.ConfiguringBookCount"
       OnCancel="OrderState.CancelConfigureBookDialog"
       OnConfirm="OrderState.ConfirmConfigureBookDialog" />
 }
@@ -47,13 +48,13 @@
         <div class="order-contents">
             <h2>Your order</h2>
 
-            @foreach (var configuredBook in order.Books)
+            @foreach (var bookCountPair in order.Books)
             {
               <div class="cart-item">
-                  <a @onclick="@(() => OrderState.RemoveConfiguredBook(configuredBook))" class="delete-item">x</a>
-                  <div class="title">@configuredBook.ToOrderCount @configuredBook.Title</div>
+                    <a @onclick="@(() => OrderState.RemoveConfiguredBook(bookCountPair.Key))" class="delete-item">x</a>
+                    <div class="title">@bookCountPair.Value @bookCountPair.Key.Title</div>
                   <div class="item-price">
-                      @configuredBook.GetFormattedTotalPrice()
+                        @(bookCountPair.Value * bookCountPair.Key.Price)
                   </div>
               </div>
             }

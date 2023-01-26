@@ -18,13 +18,13 @@
     <div class="checkout-cols">
         <div class="checkout-order-details">
             <h4>Review order</h4>
-            @foreach (var book in Order.Books)
+            @foreach (var bookCountPair in Order.Books)
             {
                 <p>
                     <strong>
-                        @(book.ToOrderCount)
-                        @book.Title
-                        <span class="total-price">@book.GetFormattedTotalPrice()</span>
+                        @bookCountPair.Value
+                        @bookCountPair.Key.Title
+                        <span class="total-price">@(bookCountPair.Key.Price * bookCountPair.Value)</span>
                     </strong>
                 </p>
             }
@@ -57,8 +57,7 @@
             await buyingTask;
             buyingTask.Wait();
         }
-        //var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "orders", OrderState.Order);
-        //var newOrderId = await response.Content.ReadFromJsonAsync<int>();
+        
         OrderState.ResetOrder();
         NavigationManager.NavigateTo("/");
     }

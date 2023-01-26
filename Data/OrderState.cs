@@ -3,36 +3,40 @@ namespace BlazingBooks.Data;
 public class OrderState
 {
     public bool ShowingConfigureDialog { get; private set; }
-    public Book ConfiguringBook { get; private set; }
+    public Book ConfiguringBook { get; set; }
+    public int ConfiguringBookCount { get; set; }
     public Order Order { get; private set; } = new Order();
 
-    public void ShowConfigureBookDialog(Book book)
+    public void ShowConfigureBookDialog(Book book, int count)
     {
-        ConfiguringBook = new Book()
-        {
-            Id = book.Id,
-            Title = book.Title,
-            Author = book.Author,
-            Published = book.Published,
-            TotalCount = book.TotalCount,
-            ToOrderCount = book.ToOrderCount,
-            Price = book.Price
-        };
-
+        ConfiguringBook = book;
+        ConfiguringBookCount = count;
+        
         ShowingConfigureDialog = true;
     }
 
     public void CancelConfigureBookDialog()
     {
         ConfiguringBook = null;
+        ConfiguringBookCount = 0;
 
         ShowingConfigureDialog = false;
     }
 
-    public void ConfirmConfigureBookDialog()
+    public void ConfirmConfigureBookDialog(int count)
     {
-        Order.Books.Add(ConfiguringBook);
+        ConfiguringBookCount = count;
+        if (Order.Books.ContainsKey(ConfiguringBook))
+        {
+            Order.Books[ConfiguringBook] += ConfiguringBookCount;
+        }
+        else
+        {
+            Order.Books.Add(ConfiguringBook, ConfiguringBookCount);
+        }
+
         ConfiguringBook = null;
+        ConfiguringBookCount = 0;
 
         ShowingConfigureDialog = false;
     }

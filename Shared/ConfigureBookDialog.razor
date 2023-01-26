@@ -9,7 +9,7 @@
         <form class="dialog-body">
             <div>
                 <label>Кол-во:</label>
-                <input type="range" min="1" max="@book.TotalCount" step="1" @bind="@book.ToOrderCount" @bind:event="oninput" />
+                <input type="range" min="1" max="@book.TotalCount" step="1" @bind="@bookCount" @bind:event="oninput" />
                 <span class="size-label">
                     @(book.TotalCount)
                 </span>
@@ -19,9 +19,9 @@
         <div class="dialog-buttons">
             <button class="btn btn-secondary mr-auto" @onclick="OnCancel">Cancel</button>
             <span class="mr-center">
-                Итого: @(book.ToOrderCount) за @(book.GetFormattedTotalPrice()) рублей
+                Итого: @bookCount за @(book.Price * bookCount) рублей
             </span>
-            <button class="btn btn-success ml-auto" @onclick="OnConfirm">Заказать >></button>
+            <button class="btn btn-success ml-auto" @onclick="@(() => OnConfirm.InvokeAsync(bookCount))">Заказать >></button>
         </div>
     </div>
 </div>
@@ -29,7 +29,8 @@
 @code {
 
     [Parameter] public Book book { get; set; }
+    [Parameter] public int bookCount { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
-    [Parameter] public EventCallback OnConfirm { get; set; }
+    [Parameter] public EventCallback<int> OnConfirm { get; set; }
 
 }

@@ -43,9 +43,14 @@ namespace BlazingBooks.Data
             } ?? new List<Book>());
         }
 
-        public async Task BuyBooks(Book book)
+        public async Task BuyBooks(KeyValuePair <Book, int> bookCount)
         {
-            _dbContext.Books.Find(book.Id).TotalCount -= book.ToOrderCount;
+            Book bookToAlter = _dbContext.Books.Find(bookCount.Key.Id);
+            if (bookToAlter.TotalCount > bookCount.Value) 
+            {
+                throw new Exception();
+            }
+            bookToAlter.TotalCount -= bookCount.Value;
             await _dbContext.SaveChangesAsync();
         }
 

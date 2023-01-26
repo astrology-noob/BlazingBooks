@@ -12,10 +12,7 @@ namespace BlazingBooks.Data
         public DateTime Published { get; set; } = DateTime.Now;
         public int Price { get; set; }
         public int TotalCount { get; set; }
-        public int ToOrderCount { get; set; } = 1;
         public string GetFormattedBasePrice() => Price.ToString("0.00");
-        public int GetTotalPrice() => ToOrderCount*Price;
-        public string GetFormattedTotalPrice() => GetTotalPrice().ToString("0.00");
 
         public Book(string title, string author, DateTime published, int price, int totalCount) : this()
         {

@@ -8,11 +8,9 @@ public class Order
 
     public DateTime CreatedTime { get; set; }
 
-    public Address DeliveryAddress { get; set; } = new Address();
+    public Dictionary<Book, int> Books { get; set; } = new Dictionary<Book, int>();
 
-    public List<Book> Books { get; set; } = new List<Book>();
-
-    public decimal GetTotalPrice() => Books.Sum(p => p.GetTotalPrice());
+    public decimal GetTotalPrice() => Books.Sum(booksCount => booksCount.Key.Price * booksCount.Value);
 
     public string GetFormattedTotalPrice() => GetTotalPrice().ToString("0.00");
 }
