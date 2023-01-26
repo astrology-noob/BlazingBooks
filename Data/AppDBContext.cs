@@ -10,5 +10,6 @@ namespace BlazingBooks.Data
         }
 
         public DbSet<Book> Books { get; set; } = null!;
+        public DbSet<Genre> Genres { get; set; } = null!;
     }
 }

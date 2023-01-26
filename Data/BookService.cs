@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BlazingBooks.Data
 {
-    public class BookService
+    public class BookService : IBookService
     {
         private AppDBContext _dbContext;
 
@@ -16,7 +13,7 @@ namespace BlazingBooks.Data
 
         public async Task<List<Book>> GetBooksFromDBAsync()
         {
-            return await Task.Run(() => _dbContext.Books.ToList());
+            return await Task.Run(() => _dbContext.Books.Include(b => b.Genres).ToList());
         }
 
         public async Task<List<Book>> GetBooksOrderedAsync(List<Book> books, PropertyEnum option)
@@ -43,15 +40,16 @@ namespace BlazingBooks.Data
             } ?? new List<Book>());
         }
 
-        public async Task BuyBooks(KeyValuePair <Book, int> bookCount)
+        public async Task<bool> BuyBooks(KeyValuePair <Book, int> bookCount)
         {
             Book bookToAlter = _dbContext.Books.Find(bookCount.Key.Id);
-            if (bookToAlter.TotalCount > bookCount.Value) 
+            if (bookToAlter.TotalCount < bookCount.Value) 
             {
-                throw new Exception();
+                return false;
             }
             bookToAlter.TotalCount -= bookCount.Value;
             await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Book> AddBookAsync(Book book)
@@ -62,7 +60,6 @@ namespace BlazingBooks.Data
             return book;
         }
 
-        // buy
         public async Task<Book> DeleteBookAsync(Book book)
         {
             _dbContext.Books.Remove(book);

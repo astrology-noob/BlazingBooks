@@ -9,23 +9,29 @@
         <img src="img/logo.svg" />
     </NavLink>
     <NavLink href="/books" Match="NavLinkMatch.Prefix" class="nav-tab">
-        <img src="img/pizza-slice.svg" />
+        <img src="img/book-slice.svg" />
         <div>Get Book</div>
     </NavLink>
 </div>
 
 <div class="main">
   <h1>Blazing Books</h1>
-  <ul class="pizza-cards">
+  <ul class="book-cards">
     @if (books != null)
     {
       @foreach (var book in books)
       {
         <li @onclick="@(() => OrderState.ShowConfigureBookDialog(book, 0))">
-            <div class="pizza-info">
-            <span class="title">@book.Title</span>
-            @book.Author
-            <span class="price">@book.GetFormattedBasePrice()</span>
+            <div class="book-info">
+                <span class="title">@book.Title</span>
+                @book.Author
+                <div class="genres">
+                    @foreach(Genre genre in book.Genres)
+                    {
+                        <span class="genre">@genre.Name</span>
+                    }
+                </div>
+                <span class="price">@book.GetFormattedBasePrice()</span>
             </div>
         </li>
       }
