@@ -1,22 +1,10 @@
 @page "/"
 @using BlazingBooks.Services
 @inject HttpClient HttpClient
-@inject NavigationManager NavigationManager
 @inject OrderState OrderState
 @inject BookService BS
 
-<div class="top-bar">
-    <NavLink href=@HomePageURI Match="NavLinkMatch.All" class="logo">
-        <img src="img/logo.svg" />
-    </NavLink>
-    <NavLink href="/books" Match="NavLinkMatch.Prefix" class="nav-tab">
-        <img src="img/pizza-slice.svg" />
-        <div>Get Book</div>
-    </NavLink>
-    <NavLink href="/loginpage" Match="NavLinkMatch.Prefix" class="nav-tab">
-        <div>Войти</div>
-    </NavLink>
-</div>
+<TopBar/>
 
 <div class="main">
   <h1>Blazing Books</h1>
@@ -85,14 +73,12 @@
 </div>
 
 @code {
-    public string HomePageURI { get; set; }
     List<Book> books = new List<Book>();
     Order order => OrderState.Order;
 
     protected override async Task OnInitializedAsync()
     {
         books = await BS.GetBooksFromDBAsync();
-        HomePageURI = NavigationManager.BaseUri;
     }
 }
 		

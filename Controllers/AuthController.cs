@@ -28,55 +28,50 @@ namespace BlazingBooks.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<string> Register(StringContent request)
+        public ActionResult Register([FromBody]UserData userData)
         {
-			Task<string> readingTask = request.ReadAsStringAsync();
-			string data = await readingTask;
-			readingTask.Wait();
+			User existingUser = _context.Users.FirstOrDefault(u => u.Username == userData.Username);
 
-            //UserData userData = JsonSerializer.Deserialize<UserData>(data);
+			if (existingUser is not null)
+            {
+                return BadRequest("User already exists");
+            }
 
-			//string passwordHash
-   //             = BCrypt.Net.BCrypt.HashPassword(userData.Password);
+			string passwordHash
+                = BCrypt.Net.BCrypt.HashPassword(userData.Password);
 
-   //         user.Username = userData.Username;
-   //         user.PasswordHash = passwordHash;
+            user.Username = userData.Username;
+            user.PasswordHash = passwordHash;
 
-            //_context.Users.Add(user);
-            //_context.SaveChangesAsync();
-            //user = new User();
+            _context.Users.Add(user);
+            _context.SaveChangesAsync();
+            user = new User();
 
-            return "a";
+            return Ok();
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(StringContent request)
+        public ActionResult<string> Login([FromBody]UserData userData)
         {
-            Task<string> readingTask = request.ReadAsStringAsync();
-            string data = await readingTask;
-            readingTask.Wait();
+            user = _context.Users.FirstOrDefault(u => u.Username == userData.Username);
+            if (user is null)
+            {
+                return BadRequest("User not found.");
+            }
 
-			//UserData userData = JsonSerializer.Deserialize<UserData>(data);
+            if (!BCrypt.Net.BCrypt.Verify(userData.Password, user.PasswordHash))
+            {
+                return BadRequest("Wrong password.");
+            }
 
-			//user = (User) _context.Users.Where(u => u.Username == userData.Username).Select(u => u);
-			//         if (user is null)
-			//         {
-			//             return BadRequest("User not found.");
-			//         }
+            user.Username = userData.Username;
+            user.PasswordHash = userData.Password;
 
-			//         if (!BCrypt.Net.BCrypt.Verify(userData.Password, user.PasswordHash))
-			//         {
-			//             return BadRequest("Wrong password.");
-			//         }
+            string token = CreateToken(user);
 
-			//user.Username = userData.Username;
-   //         user.PasswordHash = userData.Password;
+            user = new User();
 
-			//string token = CreateToken(user);
-
-            //user = new User();
-
-            return Ok(data);
+            return Ok(token);
         }
 
         private string CreateToken(User user)
