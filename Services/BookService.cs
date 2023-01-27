@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlazingBooks.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace BlazingBooks.Data
+namespace BlazingBooks.Services
 {
     public class BookService : IBookService
     {
@@ -20,8 +21,8 @@ namespace BlazingBooks.Data
         {
             return await Task.Run(() => option switch
             {
-                PropertyEnum.Author    => books.OrderBy(book => book.Author).ToList(),
-                PropertyEnum.Title     => books.OrderBy(book => book.Title).ToList(),
+                PropertyEnum.Author => books.OrderBy(book => book.Author).ToList(),
+                PropertyEnum.Title => books.OrderBy(book => book.Title).ToList(),
                 PropertyEnum.Published => books.OrderBy(book => book.Published).ToList(),
                 PropertyEnum.Price => books.OrderBy(book => book.Price).ToList(),
                 _ => throw new NotImplementedException()
@@ -40,10 +41,10 @@ namespace BlazingBooks.Data
             } ?? new List<Book>());
         }
 
-        public async Task<bool> BuyBooks(KeyValuePair <Book, int> bookCount)
+        public async Task<bool> BuyBooks(KeyValuePair<Book, int> bookCount)
         {
             Book bookToAlter = _dbContext.Books.Find(bookCount.Key.Id);
-            if (bookToAlter.TotalCount < bookCount.Value) 
+            if (bookToAlter.TotalCount < bookCount.Value)
             {
                 return false;
             }

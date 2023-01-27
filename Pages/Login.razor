@@ -1,0 +1,45 @@
+﻿@page "/loginpage"
+@using BlazingBooks.Shared
+@*@using BlazingBooks.Controllers*@
+@*@inject AuthController Auth*@
+@using System.Text.Json
+@using System.Text
+
+<h3>Login</h3>
+<form @onsubmit="loginUser">
+	<input type="text" placeholder="user" @bind-value="username"/>
+	<input type="text" placeholder="pass" @bind-value="password"/>
+	<input type="submit"/>
+</form>
+
+@token
+
+<div>Нет аккаунта?
+	<NavLink href="/registerpage" Match="NavLinkMatch.Prefix" class="nav-tab">
+		<div>Зарегистрироваться</div>
+	</NavLink>
+</div>
+
+@code {
+	public string username;
+	public string password;
+	public string token;
+
+	public async Task loginUser()
+	{
+		using (var httpClient = new HttpClient())
+		{
+			UserData userData = new UserData { Username = username, Password = password};
+			var content = JsonSerializer.Serialize(userData);
+			var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+			using (var result = await httpClient.PostAsync("http://localhost:20845/api/Auth/login", stringContent)){
+
+				token = await result.Content.ReadAsStringAsync();
+			};
+			//using (var response = )
+			//{
+			//	token = await response.Content.ReadAsStringAsync();
+			//}
+		}
+	}
+}

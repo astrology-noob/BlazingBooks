@@ -1,4 +1,5 @@
 @page "/"
+@using BlazingBooks.Services
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject OrderState OrderState
@@ -9,8 +10,11 @@
         <img src="img/logo.svg" />
     </NavLink>
     <NavLink href="/books" Match="NavLinkMatch.Prefix" class="nav-tab">
-        <img src="img/book-slice.svg" />
+        <img src="img/pizza-slice.svg" />
         <div>Get Book</div>
+    </NavLink>
+    <NavLink href="/loginpage" Match="NavLinkMatch.Prefix" class="nav-tab">
+        <div>Войти</div>
     </NavLink>
 </div>
 

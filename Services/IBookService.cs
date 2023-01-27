@@ -1,4 +1,6 @@
-﻿namespace BlazingBooks.Data
+﻿using BlazingBooks.Data;
+
+namespace BlazingBooks.Services
 {
     public interface IBookService
     {
