@@ -1,0 +1,25 @@
+﻿@page "/genres"
+@using BlazingBooks.Services
+@inject GenreService GS
+@layout SideBarLayout
+
+<h3>Genres</h3>
+
+@if (genres != null)
+{
+    <ul class="genres_list">
+        @foreach (var genre in genres)
+        {
+            <li><a href="/genres/@genre.Name">@genre.Name</a></li>
+        }
+    </ul>
+}
+
+@code {
+    List<Genre> genres { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        genres = await GS.GetGenresFromDBAsync();
+    }
+}

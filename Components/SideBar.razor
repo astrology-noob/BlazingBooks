@@ -1,0 +1,57 @@
+﻿@inject OrderState OrderState
+
+<div class="sidebar">
+    @if (order.BooksList.Any())
+    {
+        <div class="order-contents">
+            <h2>Your order</h2>
+
+            @foreach (var bookCountPair in order.BooksList)
+            {
+                <CartItem 
+                    book="bookCountPair.Key" 
+                    bookCount="bookCountPair.Value" 
+                    OnCartItemDelete="OrderState.RemoveBookFromCart"
+                    OnCountUp="IncrementCount"
+                    OnCountDown="DecrementCount" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-cart">Choose a book<br>to get started</div>
+    }
+
+    <div class="order-total @(order.BooksList.Any() ? "" : "hidden")">
+        Total:
+        <span class="total-price">@order.GetFormattedTotalPrice()</span>
+        <a href="checkout" class="@(OrderState.Order.BooksList.Count == 0 ? "btn btn-warning disabled" : "btn btn-warning")">
+            Order >>
+        </a>
+    </div>
+</div>
+
+@code {
+    Order order => OrderState.Order;
+
+    protected override void OnInitialized()
+    {
+        OrderState.OnBookAddedToCart += StateHasChanged;
+        OrderState.OnBookRemovedFromCart += StateHasChanged;
+        base.OnInitialized();
+    }
+
+    private void IncrementCount(Book book)
+    {
+        if (order.BooksList[book] < book.TotalCount)
+            order.BooksList[book]++;
+        StateHasChanged();
+    }
+
+    private void DecrementCount(Book book)
+    {
+        if (order.BooksList[book] > 0)
+            order.BooksList[book]--;
+        StateHasChanged();
+    }
+}

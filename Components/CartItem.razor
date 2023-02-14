@@ -1,0 +1,20 @@
+﻿<div class="cart-item">
+    <a @onclick="@(() => OnCartItemDelete.Invoke(book))" class="delete-item">x</a>
+    <div class="title">@book.Title</div>
+    <div class="item-count">
+        <button @onclick="@(() => OnCountDown.Invoke(book))" class="book-count-control">-</button>
+        <p>@bookCount</p>
+        <button @onclick="@(() => OnCountUp.Invoke(book))" class="book-count-control">+</button>
+    </div>
+    <div class="item-price">
+        @(bookCount * book.Price)
+    </div>
+</div>
+
+@code {
+    [Parameter] public Book book { get; set; }
+    [Parameter] public int bookCount { get; set; }
+    [Parameter] public Action<Book> OnCartItemDelete { get; set; }
+    [Parameter] public Action<Book> OnCountUp { get; set; }
+    [Parameter] public Action<Book> OnCountDown { get; set; }
+}

@@ -1,0 +1,25 @@
+﻿@page "/authors"
+@using BlazingBooks.Services
+@inject AuthorService AS
+@layout SideBarLayout
+
+<h3>Authors</h3>
+
+@if (authors != null)
+{
+    <ul class="genres_list">
+        @foreach (var author in authors)
+        {
+            <li><a href="/authors/@author.Name">@author.Name</a></li>
+        }
+    </ul>
+}
+
+@code {
+    List<Author> authors{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authors = await AS.GetAuthorsFromDBAsync();
+    }
+}

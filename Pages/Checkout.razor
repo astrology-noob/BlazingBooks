@@ -4,68 +4,65 @@
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject BookService BS
-
-<div class="top-bar">
-    <NavLink href=@HomePageURI Match="NavLinkMatch.All" class="logo">
-        <img src="img/logo.svg" />
-    </NavLink>
-@*    <NavLink href="/books" Match="NavLinkMatch.Prefix" class="nav-tab">
-        <img src="img/book-slice.svg" />
-        <div>Get book</div>
-    </NavLink>*@
-</div>
+@layout TopBarLayout
 
 <div class="main">
-    <div class="checkout-cols">
+    <div class="checkout-main">
         <div class="checkout-order-details">
             <h4>Review order</h4>
-            @foreach (var bookCountPair in Order.Books)
-            {
-                <p>
-                    <strong>
-                        @bookCountPair.Value
-                        @bookCountPair.Key.Title
-                        <span class="total-price">@(bookCountPair.Key.Price * bookCountPair.Value)</span>
-                    </strong>
-                </p>
-            }
+            <table>
+                <tr>
+                    <th>Title</th>
+                    <th>Count</th>
+                    <th>Sum</th>
+                </tr>
+                @foreach (var bookCountPair in Order.BooksList)
+                {
+                    <tr>
+                        <td>
+                            @bookCountPair.Key.Title
+                        </td>
+                        <td>
+                            @bookCountPair.Value
+                        </td>
+                        <td>
+                            <span class="total-price">@(bookCountPair.Key.Price * bookCountPair.Value)</span>
+                        </td>
+                    </tr>
+                }
+            </table>
 
-            <p>
-                <strong>
-                    Итого:
-                    <span class="total-price">@Order.GetFormattedTotalPrice()</span>
-                </strong>
+            <p class="order-total-price">
+               Total:
+               <span class="total-price">@Order.GetFormattedTotalPrice()</span>
             </p>
         </div>
-    </div>
 
-    <button class="checkout-button btn btn-warning" @onclick="PlaceOrder" disabled=@IsSubmitting>
-        Place order
-    </button>
+        <button class="checkout-button btn btn-warning" @onclick="PlaceOrder">
+            Order
+        </button>
+    </div>
 </div>
 
 @code {
     Order Order => OrderState.Order;
     public string HomePageURI { get; set; }
-    bool IsSubmitting;
 
     public async Task PlaceOrder()
     {
-        IsSubmitting = true;
-        foreach (var bookToOrder in OrderState.Order.Books)
+        foreach (var bookToOrder in OrderState.Order.BooksList)
         {        
-            var buyingTask= BS.BuyBooks(bookToOrder);
+            var buyingTask = BS.BuyBooks(bookToOrder);
             await buyingTask;
             buyingTask.Wait();
         }
         
-        OrderState.ResetOrder();
         NavigationManager.NavigateTo("/");
+        OrderState.ResetOrder();
     }
 
     protected override Task OnInitializedAsync()
     {
-        HomePageURI = NavigationManager.BaseUri;
         return base.OnInitializedAsync();
     }
 }

@@ -2,52 +2,32 @@ namespace BlazingBooks.Data;
 
 public class OrderState
 {
-    public bool ShowingConfigureDialog { get; private set; }
-    public Book ConfiguringBook { get; set; }
-    public int ConfiguringBookCount { get; set; }
     public Order Order { get; private set; } = new Order();
 
-    public void ShowConfigureBookDialog(Book book, int count)
+    public void AddBookToCart(Book book)
     {
-        ConfiguringBook = book;
-        ConfiguringBookCount = count;
-        
-        ShowingConfigureDialog = true;
-    }
-
-    public void CancelConfigureBookDialog()
-    {
-        ConfiguringBook = null;
-        ConfiguringBookCount = 0;
-
-        ShowingConfigureDialog = false;
-    }
-
-    public void ConfirmConfigureBookDialog(int count)
-    {
-        ConfiguringBookCount = count;
-        if (Order.Books.ContainsKey(ConfiguringBook))
+        if (Order.BooksList.ContainsKey(book))
         {
-            Order.Books[ConfiguringBook] += ConfiguringBookCount;
+            Order.BooksList[book] += 1;
         }
         else
         {
-            Order.Books.Add(ConfiguringBook, ConfiguringBookCount);
+            Order.BooksList.Add(book, 1);
         }
-
-        ConfiguringBook = null;
-        ConfiguringBookCount = 0;
-
-        ShowingConfigureDialog = false;
+        OnBookAddedToCart();
     }
 
-    public void RemoveConfiguredBook(Book book)
+    public void RemoveBookFromCart(Book book)
     {
-        Order.Books.Remove(book);
+        Order.BooksList.Remove(book);
+        OnBookRemovedFromCart();
     }
     
     public void ResetOrder()
     {
-        Order.Books.Clear();
+        Order.BooksList.Clear();
     }
+
+    public event Action OnBookAddedToCart;
+    public event Action OnBookRemovedFromCart;
 }

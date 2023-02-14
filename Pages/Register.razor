@@ -1,21 +1,26 @@
 ﻿@page "/registerpage"
-@*@using BlazingBooks.Controllers*@
-@*@inject AuthController Auth*@
 @using System.Text.Json
 @using System.Text
+@inject NavigationManager NavigationManager
 
-<h3>Register</h3>
-<form @onsubmit="registerUser">
-	<input type="text" placeholder="user" @bind-value="username" />
-	<input type="text" placeholder="pass" @bind-value="password" />
-	<input type="submit" />
-</form>
-
-<div>Уже есть аккаунт?
-	<NavLink href="/loginpage" Match="NavLinkMatch.Prefix" class="nav-tab">
-		<div>Войти</div>
-	</NavLink>
+<div class="auth-main">
+	<div class="auth-content">
+		<h3>Register</h3>
+		<form @onsubmit="registerUser">
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="user" @bind-value="username" />
+				<input type="text" class="form-control" placeholder="pass" @bind-value="password" />
+				<input type="submit" class="btn btn-primary" value="Register"/>
+			</div>
+		</form>
+		<div>Already have an account?
+			<NavLink href="/loginpage" Match="NavLinkMatch.Prefix" class="btn btn-secondary">
+				<div>Login</div>
+			</NavLink>
+		</div>
+	</div>
 </div>
+
 
 @code {
 	public string username;
@@ -28,9 +33,9 @@
 			UserData userData = new UserData(username, password);
 			var content = JsonSerializer.Serialize(userData);
 			var stringContent = new StringContent(content, UnicodeEncoding.UTF8, "application/json");
-			using (var response = await httpClient.PostAsync("http://localhost:20845/api/Auth/register", stringContent))
+			using (await httpClient.PostAsync("http://localhost:20845/api/Auth/register", stringContent))
 			{
-				string token = await response.Content.ReadAsStringAsync();
+				NavigationManager.NavigateTo("/loginpage");
 			}
 		}
 	}

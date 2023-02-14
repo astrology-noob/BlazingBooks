@@ -1,38 +1,55 @@
 ﻿@page "/loginpage"
-@using BlazingBooks.Shared
-@*@using BlazingBooks.Controllers*@
-@*@inject AuthController Auth*@
 @using System.Text.Json
 @using System.Text
+@using BlazingBooks.Services
+@inject UserService US
+@inject NavigationManager NavigationManager
 
-<h3>Login</h3>
-<form @onsubmit="loginUser">
-	<input type="text" placeholder="user" @bind-value="username"/>
-	<input type="text" placeholder="pass" @bind-value="password"/>
-	<input type="submit"/>
-</form>
+<div class="auth-main">
+	<div class="auth-content">
+		<h3>Login</h3>
+		<form @onsubmit="loginUser">
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="user" @bind-value="username"/>
+				<input type="text" class="form-control" placeholder="pass" @bind-value="password" />
+				<input type="submit" class="btn btn-primary" value="Login" />
+			</div>
+		</form>
 
-<div>Нет аккаунта?
-	<NavLink href="/registerpage" Match="NavLinkMatch.Prefix" class="nav-tab">
-		<div>Зарегистрироваться</div>
-	</NavLink>
+		<div>Don't have an account?
+			<NavLink href="/registerpage" Match="NavLinkMatch.Prefix" class="btn btn-secondary">
+				<div>Register</div>
+			</NavLink>
+		</div>
+	</div>
 </div>
+
 
 @code {
 	public string username;
 	public string password;
+	public string token;
+
+	[CascadingParameter]
+	private TokenStateProvider TokenStateProvider { get; set; }
 
 	public async Task loginUser()
 	{
 		using (var httpClient = new HttpClient())
 		{
-			UserData userData = new UserData { Username = username, Password = password};
+			UserData userData = new UserData { Username = username, Password = password };
 			var content = JsonSerializer.Serialize(userData);
 			var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
 			using (var result = await httpClient.PostAsync("http://localhost:20845/api/Auth/login", stringContent)){
-
-				string token = await result.Content.ReadAsStringAsync();
+				token = await result.Content.ReadAsStringAsync();
 			};
+
+			// разобраться с асинхронностью
+			var task = TokenStateProvider.SetTokenAsync(token);
+			await task;
+			task.Wait();
+
+			NavigationManager.NavigateTo("/");
 		}
 	}
 }

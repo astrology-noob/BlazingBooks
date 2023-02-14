@@ -1,0 +1,38 @@
+﻿@page "/genres/{genreName}"
+@using BlazingBooks.Services
+@inject GenreService GS
+@inject BookService BS
+@inject OrderState OrderState
+@layout SideBarLayout
+
+<p>@genreName</p>
+
+<ul class="book-cards">
+    @if (books != null)
+    {
+        @foreach (var book in books)
+        {
+            <BookCard book="book"/>
+        }
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public string genreName { get; set; }
+
+    List<Book> books { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await GetBooksByGenreAsync(genreName);
+    }
+
+    private async Task<List<Book>> GetBooksByGenreAsync(string genreName)
+    {
+        Task<Genre> genreGettingTask = GS.GetGenreByName(genreName);
+        Genre genre = await genreGettingTask;
+        genreGettingTask.Wait();
+        return await BS.GetBooksByGenre(genre);
+    }
+} 

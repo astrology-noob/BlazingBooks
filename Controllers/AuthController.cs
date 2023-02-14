@@ -1,15 +1,9 @@
 ﻿using BlazingBooks.Data;
-using BlazingBooks.Services;
-using BlazingBooks.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.NetworkInformation;
 using System.Security.Claims;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
-
-using System.Text.Json;
 
 namespace BlazingBooks.Controllers
 {
@@ -30,12 +24,14 @@ namespace BlazingBooks.Controllers
         [HttpPost("register")]
         public ActionResult Register([FromBody]UserData userData)
         {
-			User existingUser = _context.Users.FirstOrDefault(u => u.Username == userData.Username);
+			user = _context.Users.FirstOrDefault(u => u.Username == userData.Username);
 
-			if (existingUser is not null)
+			if (user is not null)
             {
                 return BadRequest("User already exists");
             }
+
+            user = new();
 
 			string passwordHash
                 = BCrypt.Net.BCrypt.HashPassword(userData.Password);

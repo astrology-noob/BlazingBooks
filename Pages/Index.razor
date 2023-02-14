@@ -1,80 +1,21 @@
 @page "/"
 @using BlazingBooks.Services
-@inject HttpClient HttpClient
 @inject OrderState OrderState
 @inject BookService BS
+@layout SideBarLayout
 
-<TopBar/>
-
-<div class="main">
-  <h1>Blazing Books</h1>
-  <ul class="book-cards">
+<ul class="book-cards">
     @if (books != null)
     {
-      @foreach (var book in books)
-      {
-        <li @onclick="@(() => OrderState.ShowConfigureBookDialog(book, 0))">
-            <div class="book-info">
-                <span class="title">@book.Title</span>
-                @book.Author
-                <div class="genres">
-                    @foreach(Genre genre in book.Genres)
-                    {
-                        <span class="genre">@genre.Name</span>
-                    }
-                </div>
-                <span class="price">@book.GetFormattedBasePrice()</span>
-            </div>
-        </li>
-      }
+        @foreach (var book in books)
+        {
+            <BookCard book="book" />
+        }
     }
-  </ul>
-</div>
-
-@if (OrderState.ShowingConfigureDialog)
-{
-    <ConfigureBookDialog
-      book="OrderState.ConfiguringBook"
-      bookCount="OrderState.ConfiguringBookCount"
-      OnCancel="OrderState.CancelConfigureBookDialog"
-      OnConfirm="OrderState.ConfirmConfigureBookDialog" />
-}
-
-<div class="sidebar">
-    @if (order.Books.Any())
-    {
-        <div class="order-contents">
-            <h2>Your order</h2>
-
-            @foreach (var bookCountPair in order.Books)
-            {
-              <div class="cart-item">
-                    <a @onclick="@(() => OrderState.RemoveConfiguredBook(bookCountPair.Key))" class="delete-item">x</a>
-                    <div class="title">@bookCountPair.Value @bookCountPair.Key.Title</div>
-                  <div class="item-price">
-                        @(bookCountPair.Value * bookCountPair.Key.Price)
-                  </div>
-              </div>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="empty-cart">Choose a book<br>to get started</div>
-    }
-
-    <div class="order-total @(order.Books.Any() ? "" : "hidden")">
-        Total:
-        <span class="total-price">@order.GetFormattedTotalPrice()</span>
-        <a href="checkout" class="@(OrderState.Order.Books.Count == 0 ? "btn btn-warning disabled" : "btn btn-warning")">
-            Order >>
-        </a>
-    </div>
-</div>
+</ul>
 
 @code {
     List<Book> books = new List<Book>();
-    Order order => OrderState.Order;
 
     protected override async Task OnInitializedAsync()
     {

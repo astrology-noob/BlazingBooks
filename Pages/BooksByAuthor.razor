@@ -1,0 +1,38 @@
+﻿@page "/authors/{authorName}"
+@using BlazingBooks.Services
+@inject AuthorService AS
+@inject BookService BS
+@inject OrderState OrderState
+@layout SideBarLayout
+
+<p>@authorName</p>
+
+<ul class="book-cards">
+    @if (books != null)
+    {
+        @foreach (var book in books)
+        {
+            <BookCard book="book"/>
+        }
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public string authorName { get; set; }
+
+    List<Book> books { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await GetBooksByAuthorAsync(authorName);
+    }
+
+    private async Task<List<Book>> GetBooksByAuthorAsync(string authorName)
+    {
+        Task<Author> authorGettingTask = AS.GetAuthorByName(authorName);
+        Author author = await authorGettingTask;
+        authorGettingTask.Wait();
+        return await BS.GetBooksByAuthor(author);
+    }
+}

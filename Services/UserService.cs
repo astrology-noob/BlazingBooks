@@ -1,6 +1,4 @@
 ﻿using BlazingBooks.Data;
-using BlazingBooks.Shared;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlazingBooks.Services
 {
@@ -15,7 +13,7 @@ namespace BlazingBooks.Services
 
         public async Task<User> GetUserByUsername(string username)
         {
-            return await Task.Run(() => (User) _dbContext.Users.Where(u => u.Username == username).Select(u => u));
+            return await Task.Run(() => _dbContext.Users.Where(u => u.Username == username).Select(u => u).ToList()[0]);
         }
     }
 }

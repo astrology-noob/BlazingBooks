@@ -1,0 +1,55 @@
+﻿@inject NavigationManager NavigationManager
+
+@if (TokenStateProvider.token != "") {
+    <div class="top-bar">
+        <NavLink href=@HomePageURI Match="NavLinkMatch.All" class="logo">
+            <img src="img/logo.svg" />
+        </NavLink>
+        <NavLink href="/genres" Match="NavLinkMatch.Prefix" class="nav-tab">
+            <div>Genres</div>
+        </NavLink>
+        <NavLink href="/authors" Match="NavLinkMatch.Prefix" class="nav-tab">
+            <div>Authors</div>
+        </NavLink>
+        <button class="nav-tab" @onclick="Logout">
+            Logout
+        </button>
+    </div>
+}
+else {
+    <div class="top-bar">
+        <NavLink href=@HomePageURI Match="NavLinkMatch.All" class="logo">
+            <img src="img/logo.svg" />
+        </NavLink>
+        <NavLink href="/genres" Match="NavLinkMatch.Prefix" class="nav-tab">
+            <div>Genres</div>
+        </NavLink>
+        <NavLink href="/authors" Match="NavLinkMatch.Prefix" class="nav-tab">
+            <div>Authors</div>
+        </NavLink>
+        <NavLink href="/loginpage" Match="NavLinkMatch.Prefix" class="nav-tab">
+            <div>Login</div>
+        </NavLink>
+    </div>
+}
+
+
+@code {
+    [CascadingParameter]
+    private TokenStateProvider TokenStateProvider { get; set; }
+
+    public string HomePageURI { get; set; }
+
+    protected override void OnInitialized()
+    {
+        HomePageURI = NavigationManager.BaseUri;
+    }
+
+    private void Logout()
+    {
+        TokenStateProvider.DeleteTokenAsync().GetAwaiter().OnCompleted(() =>
+            StateHasChanged()
+        );
+
+    }
+}

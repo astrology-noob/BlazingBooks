@@ -1,0 +1,38 @@
+﻿@inject OrderState OrderState
+@inject NavigationManager NavigationManager
+
+<li @onclick="@(()=>NavigationManager.NavigateTo($"/books/{book.Id}"))">
+    <div class="book-info">
+        <span class="title">@book.Title</span>
+        <div class="authors">
+            @foreach (var author in book.Authors)
+            {
+                <span class="author">@author.Name</span>
+            }
+        </div>
+        <div class="genres">
+            @foreach (var genre in book.Genres)
+            {
+                <span class="genre"><a href="/genres/@genre.Name">@genre.Name</a></span>
+            }
+        </div>
+        <div class="buy-book">
+            @if (book.TotalCount > 0)
+            {
+                <p>@(book.TotalCount + " left")</p>
+                <button @onclick:stopPropagation="true" @onclick="@(() => OrderState.AddBookToCart(book))"><img src="/img/cart.svg"/></button>
+                <span class="price">@book.GetFormattedBasePrice()</span>
+            }
+            else
+            {
+                <p>Not available</p>
+                <button @onclick:stopPropagation="true" disabled><img src="/img/cart.svg"/></button>
+                <span class="price" style="background-color: gray">@book.GetFormattedBasePrice()</span>
+            }
+        </div>
+    </div>
+</li>
+
+@code {
+    [Parameter] public Book book { get; set; }
+}
