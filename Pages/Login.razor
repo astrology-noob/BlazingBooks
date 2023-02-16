@@ -2,13 +2,15 @@
 @using System.Text.Json
 @using System.Text
 @using BlazingBooks.Services
+@using System.Security.Claims
 @inject UserService US
 @inject NavigationManager NavigationManager
+@inject AuthService AS
 
 <div class="auth-main">
 	<div class="auth-content">
 		<h3>Login</h3>
-		<form @onsubmit="loginUser">
+		<form @onsubmit="LoginUser">
 			<div class="form-group">
 				<input type="text" class="form-control" placeholder="user" @bind-value="username"/>
 				<input type="text" class="form-control" placeholder="pass" @bind-value="password" />
@@ -28,28 +30,31 @@
 @code {
 	public string username;
 	public string password;
-	public string token;
 
-	[CascadingParameter]
-	private TokenStateProvider TokenStateProvider { get; set; }
-
-	public async Task loginUser()
+	public async Task LoginUser()
 	{
-		using (var httpClient = new HttpClient())
+		UserData userData = new(username, password);
+
+		var result = await AS.Login(userData);
+
+		if (result.Successful)
 		{
-			UserData userData = new UserData { Username = username, Password = password };
-			var content = JsonSerializer.Serialize(userData);
-			var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
-			using (var result = await httpClient.PostAsync("http://localhost:20845/api/Auth/login", stringContent)){
-				token = await result.Content.ReadAsStringAsync();
-			};
-
-			// разобраться с асинхронностью
-			var task = TokenStateProvider.SetTokenAsync(token);
-			await task;
-			task.Wait();
-
 			NavigationManager.NavigateTo("/");
 		}
+
+	//using (var httpClient = new HttpClient())
+		//{
+		//	UserData userData = new UserData { Username = username, Password = password };
+		//	var content = JsonSerializer.Serialize(userData);
+		//	var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+		//	using (var result = await httpClient.PostAsync("http://localhost:20845/api/Auth/login", stringContent)){
+		//		token = await result.Content.ReadAsStringAsync();
+		//	};
+
+		//	// разобраться с асинхронностью
+		//	var task = TokenStateProvider.SetTokenAsync(token);
+		//	await task;
+		//	task.Wait();
+		//}
 	}
 }

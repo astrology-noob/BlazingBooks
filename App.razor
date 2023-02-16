@@ -1,7 +1,7 @@
-﻿<TokenStateProvider>
+﻿<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
         <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="typeof(MainLayout)"/>
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="typeof(MainLayout)"/>
         </Found>
         <NotFound>
             <LayoutView>
@@ -9,4 +9,4 @@
             </LayoutView>
         </NotFound>
     </Router>
-</TokenStateProvider>
+</CascadingAuthenticationState>

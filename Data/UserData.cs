@@ -1,16 +1,9 @@
 ﻿namespace BlazingBooks.Data
 {
-
     public class UserData
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-
-        public UserData()
-        {
-            Username = "a";
-            Password = "a";
-        }
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
 
         public UserData(string username, string password)
         {

@@ -6,5 +6,9 @@
     <div class="books">
         @Body
     </div>
-    <SideBar/>
+<AuthorizeView>
+    <Authorized>
+        <SideBar/>
+    </Authorized>
+</AuthorizeView>
 </div>
