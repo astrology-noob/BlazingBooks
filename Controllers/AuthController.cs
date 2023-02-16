@@ -1,8 +1,6 @@
 ﻿using BlazingBooks.Data;
-using BlazingBooks.Pages;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
@@ -65,8 +63,12 @@ namespace BlazingBooks.Controllers
         [HttpPost("login")]
         public ActionResult<LoginResult> Login([FromBody] UserData userData)
         {
-            user = _context.Users.FirstOrDefault(u => u.Username == userData.Username);
-            if (user is null)
+            user = _context.Users.Include(u => u.Roles).FirstOrDefault(u => u.Username == userData.Username);
+
+            UserSameName userSameName = new();
+            var userExists = _context.Users.ToList().Contains(user, userSameName);
+
+            if (!userExists)
             {
                 return BadRequest(new LoginResult { Successful = false, Error = "User not found" });
             }
@@ -76,12 +78,6 @@ namespace BlazingBooks.Controllers
                 return BadRequest(new LoginResult { Successful = false, Error = "Wrong password" });
             }
 
-            user = new()
-            {
-                Username = userData.Username,
-                PasswordHash = userData.Password
-            };
-
             string token = CreateToken(user);
 
             return Ok(new LoginResult { Successful = true, Token = token });
@@ -90,17 +86,17 @@ namespace BlazingBooks.Controllers
         private string CreateToken(User user)
         {
 
-            //var roles = user.GetRolesAsync(user);
+            var roles = user.Roles;
 
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, user.Username)
             };
 
-            //foreach (var role in roles)
-            //{
-            //    claims.Add(new Claim(ClaimTypes.Role, role));
-            //}
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+            }
 
             var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration["JwtExpiryInDays"]));
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
