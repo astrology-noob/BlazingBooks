@@ -19,7 +19,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        books = await BS.GetBooksFromDBAsync();
+        books = await BS.GetBooksReadOnly();
     }
 }
 		

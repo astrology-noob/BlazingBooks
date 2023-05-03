@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BlazingBooks.Data
 {
@@ -17,7 +16,8 @@ namespace BlazingBooks.Data
         public ICollection<Genre> Genres { get; set; }
         public string GetFormattedBasePrice() => Price.ToString("0.00");
 
-        public Book(string title, ICollection<Author> authors, DateTime published, string coverImageUrl, string description, int price, int totalCount, ICollection<Genre> genres) : this()
+        public Book(string title, ICollection<Author> authors, DateTime published, string coverImageUrl, 
+                    string description, int price, int totalCount, ICollection<Genre> genres) : this()
         {
             Title = title;
             Authors = authors;

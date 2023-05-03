@@ -1,0 +1,31 @@
+﻿@page "/admin/genres/edit/{id:int}"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+@using BlazingBooks.Services
+@inject GenreService GS
+
+@if (genre != null) {
+    <div>
+        <label for="name">Жанр:
+            <input type="text" name="name" @bind-value="genre.Name">
+            <button @onclick="UpdateGenre"></button>
+        </label>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private Genre genre { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        genre = await GS.GetGenreById(id);
+    }
+
+    // todo: icollection в книгах не меняются
+    private async void UpdateGenre()
+    {
+        await GS.UpdateGenreAsync(genre);
+    }
+}

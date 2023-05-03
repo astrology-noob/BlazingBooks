@@ -1,0 +1,31 @@
+﻿@page "/admin/authors/edit/{id:int}"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+@using BlazingBooks.Services
+@inject AuthorService AS
+
+@if (author != null) {
+    <div>
+        <label for="name">Имя автора:
+            <input type="text" name="name" @bind-value="author.Name">
+            <button @onclick="UpdateAuthor"></button>
+        </label>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private Author author { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        author = await AS.GetAuthorById(id);
+    }
+
+    // todo: icollection в книгах не меняются
+    private async void UpdateAuthor()
+    {
+        await AS.UpdateAuthorAsync(author);
+    }
+}

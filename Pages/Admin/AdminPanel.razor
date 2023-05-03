@@ -1,0 +1,19 @@
+﻿@page "/admin"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+
+<ul>
+    <li>
+        <a href="/admin/books">Books</a>
+    </li>
+    <li>
+        <a href="/admin/authors">Authors</a>
+    </li>
+    <li>
+        <a href="/admin/genres">Genres</a>
+    </li>
+</ul>
+
+@code {
+
+}

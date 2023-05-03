@@ -4,44 +4,47 @@
 @inject BookService BS
 @inject OrderState OrderState
 
-<div class="book-page-flex-container">
-    <div class="book-page">
-        <div class="book-page-cover" style="background-image: url(@book.CoverImageUrl)"></div>
-        <div class="book-page-right-side">
-            <div class="book-page-info">
-                <div class="book-page-title">@book.Title</div>
-                <div class="authors">
-                    @foreach (var author in book.Authors)
+@if (book != null)
+{
+    <div class="book-page-flex-container">
+        <div class="book-page">
+            <div class="book-page-cover" style="background-image: url(@book.CoverImageUrl)"></div>
+            <div class="book-page-right-side">
+                <div class="book-page-info">
+                    <div class="book-page-title">@book.Title</div>
+                    <div class="authors">
+                        @foreach (var author in book.Authors)
+                        {
+                            <span class="author">@author.Name</span>
+                        }
+                    </div>
+                    <div class="genres">
+                        @foreach (var genre in book.Genres)
+                        {
+                            <span class="genre"><a href="/genres/@genre.Name">@genre.Name</a></span>
+                        }
+                    </div>
+                    <div class="book-page-published">@book.Published</div>
+                    <div class="book-page-description">@book.Description</div>
+                </div>
+                <div class="book-page-buy">
+                    @if (book.TotalCount > 0)
                     {
-                        <span class="author">@author.Name</span>
+                        <p>@(book.TotalCount + " left")</p>
+                        <button @onclick="@(() => OrderState.AddBookToCart(book))"><img src="/img/cart.svg"/></button>
+                        <span class="price">@book.GetFormattedBasePrice()</span>
+                    }
+                    else
+                    {
+                        <p>Not available</p>
+                        <button disabled><img src="/img/cart.svg"/></button>
+                        <span class="price" style="background-color: gray">@book.GetFormattedBasePrice()</span>
                     }
                 </div>
-                <div class="genres">
-                    @foreach (var genre in book.Genres)
-                    {
-                        <span class="genre"><a href="/genres/@genre.Name">@genre.Name</a></span>
-                    }
-                </div>
-                <div class="book-page-published">@book.Published</div>
-                <div class="book-page-description">@book.Description</div>
-            </div>
-            <div class="book-page-buy">
-                @if (book.TotalCount > 0)
-                {
-                    <p>@(book.TotalCount + " left")</p>
-                    <button @onclick="@(() => OrderState.AddBookToCart(book))"><img src="/img/cart.svg"/></button>
-                    <span class="price">@book.GetFormattedBasePrice()</span>
-                }
-                else
-                {
-                    <p>Not available</p>
-                    <button disabled><img src="/img/cart.svg"/></button>
-                    <span class="price" style="background-color: gray">@book.GetFormattedBasePrice()</span>
-                }
             </div>
         </div>
     </div>
-</div>
+}
 
 @code {
     [Parameter]
@@ -49,7 +52,7 @@
 
     private Book book { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         book = await BS.GetBookById(bookId);
     }

@@ -1,0 +1,47 @@
+﻿@page "/admin/genres/add"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+@using BlazingBooks.Services
+@inject GenreService GS
+
+<div class="container">
+    <form @onsubmit="AddGenre">
+        <div class="form-group">
+            <label for="name">
+                Name:
+                <input class="form-control" type="text" name="name" @bind-value="genre.Name">
+            </label>
+            <input type="submit" class="btn-primary" value="Add"/>
+        </div>
+    </form>
+</div>
+
+<style>
+    .container {
+        width: 100vw;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    form {
+        width: 300px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+@code {
+    private Genre genre { get; set; } = new();
+
+    private async void AddGenre()
+    {
+        await GS.AddGenreAsync(genre);
+        genre = new();
+        StateHasChanged();
+    }
+}

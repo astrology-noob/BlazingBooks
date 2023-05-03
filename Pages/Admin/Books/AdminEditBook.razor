@@ -1,0 +1,134 @@
+﻿@page "/admin/books/edit/{id:int}"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+@using BlazingBooks.Services
+@inject BookService BS
+@inject GenreService GS
+@inject AuthorService AS
+
+@if (book != null) {
+    <div class="edit-book-container">
+        <div class="edit-space">
+            <label for="title">
+                Title:
+                <input type="text" class="form-control" name="title" @bind-value="book.Title">
+                <button @onclick="UpdateBook" class="btn-dark">✔</button>
+            </label>
+            <label for="coverImageUrl">
+                Cover:
+                <input type="text" class="form-control" name="coverImageUrl" @bind-value="book.CoverImageUrl">
+                <button @onclick="UpdateBook" class="btn-dark">✔</button>
+            </label>
+            <label for="description">
+                Description:
+                <input type="text" class="form-control" name="description" @bind-value="book.Description">
+                <button @onclick="UpdateBook" class="btn-dark">✔</button>
+            </label>
+            <label for="published">
+                Published:
+                <input type="text" class="form-control" name="published" @bind-value="book.Published">
+                <button @onclick="UpdateBook" class="btn-dark">✔</button>
+            </label>
+            <label for="price">
+                Price:
+                <input type="text" class="form-control" name="price" @bind-value="book.Price">
+                <button @onclick="UpdateBook" class="btn-dark">✔</button>
+            </label>
+            <label for="totalCount">
+                Count:
+                <input type="text" class="form-control" name="totalCount" @bind-value="book.TotalCount">
+                <button @onclick="UpdateBook" class="btn-dark">✔</button>
+            </label>
+
+            @foreach (var genre in book.Genres)
+            {
+                <div>
+                    @genre.Name
+                    <button @onclick:stopPropagation="true" @onclick="@(() => RemoveGenre(genre))" class="btn-danger">x</button>
+                </div>
+            }
+        
+            <label for="genre">
+                <input type="text" name="genre" class="form-control" @bind-value="genreToAdd"/>
+                <button @onclick:stopPropagation="true" @onclick="AddGenre" class="btn-primary">Add genre</button>
+            </label>
+
+            @foreach (var author in book.Authors)
+            {
+                <div>
+                    @author.Name
+                    <button @onclick:stopPropagation="true" @onclick="@(() => RemoveAuthor(author))" class="btn-danger">x</button>
+                </div>
+            }
+
+            <label for="author">
+                <input type="text" name="author" class="form-control" @bind-value="authorToAdd" />
+                <button @onclick:stopPropagation="true" @onclick="AddAuthor" class="btn-primary">Add author</button>
+            </label>
+        </div>
+    </div>
+}
+
+<style>
+    .edit-book-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .edit-space {
+        width: 700px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .edit-space label {
+        display: flex;
+        gap: 10px;
+    }
+</style>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private Book book { get; set; }
+    private string genreToAdd = string.Empty;
+    private string authorToAdd = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        book = await BS.GetBookById(id);
+    }
+
+    private async void AddAuthor()
+    {
+        Author author = await AS.GetAuthorByName(authorToAdd) ?? new() { Name = authorToAdd };
+        await BS.AddAuthorToBook(book, author);
+        authorToAdd = string.Empty;
+        StateHasChanged();
+    }
+
+    private async void RemoveAuthor(Author author)
+    {
+        await BS.RemoveAuthorFromBook(book, author);
+    }
+
+    private async void AddGenre()
+    {
+        Genre genre = await GS.GetGenreByName(genreToAdd) ?? new() { Name = genreToAdd };
+        await BS.AddGenreToBook(book, genre);
+        genreToAdd = string.Empty;
+        StateHasChanged();
+    }
+
+    private async void RemoveGenre(Genre genre)
+    {
+        await BS.RemoveGenreFromBook(book, genre);
+    }
+
+    private async void UpdateBook()
+    {
+        await BS.UpdateBookAsync(book);
+    }
+}

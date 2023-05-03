@@ -26,9 +26,9 @@
         </NotAuthorized>
     </AuthorizeView>
     <AuthorizeView Roles="Admin">
-        <button class="nav-tab">
-            Admin Panel
-        </button>
+        <NavLink href="/admin" Match="NavLinkMatch.Prefix" class="nav-tab">
+            <div>Admin Panel</div>
+        </NavLink>
     </AuthorizeView>
 </div>
 

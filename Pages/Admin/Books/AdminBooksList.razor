@@ -1,0 +1,77 @@
+﻿@page "/admin/books"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+@using BlazingBooks.Services
+@inject BookService BS
+
+<div class="container">
+    @if (books != null) {
+        @foreach (var book in books)
+        {
+            <div class="small-book-card">
+                <a href="/admin/books/edit/@book.Id">@book.Title</a>
+                <button @onclick:stopPropagation="true" @onclick="@(() => RemoveBook(book))" class="btn-danger">x</button>
+            </div>
+        }
+    }
+
+    <a href="/admin/books/add" class="add-book">Add book +</a>
+</div>
+
+<style>
+    .container {
+        width: 100vw;
+        height: 100%;
+        max-height: 100%;
+        padding: 100px 150px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        box-sizing:border-box;
+        overflow-y: auto;
+    }
+
+    .small-book-card {
+        width: 200px;
+        height: 200px;
+        background-color: #D3D3D3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .add-book {
+        width: 200px;
+        height: 100px;
+        background-color: #D3D3D3;
+        text-decoration: none;
+        color: black;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+@code {
+
+    private List<Book> books;
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await BS.GetBooksReadOnly();
+    }
+
+    private void RemoveBook(Book book)
+    {
+        BS.RemoveBookAsync(book).GetAwaiter().OnCompleted(async () =>
+        {
+            books = await BS.GetBooksReadOnly();
+            StateHasChanged();
+        });
+    }
+}

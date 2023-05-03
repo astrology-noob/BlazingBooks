@@ -1,0 +1,88 @@
+﻿@page "/admin/authors"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+@using BlazingBooks.Services
+@inject AuthorService AS
+
+<div class="admin-authors-list">
+    <h3>Authors</h3>
+    <div class="container">
+        @if (authors != null) {
+            @foreach (var author in authors)
+            {
+                <div class="small-author-card">
+                    <a href="/admin/authors/edit/@author.Id">@author.Name</a>
+                    <button @onclick:stopPropagation="true" @onclick="@(() => RemoveAuthor(author))" class="btn-danger">x</button>
+                </div>
+            }
+        }
+        <a href="/admin/authors/add" class="add-author">Add author +</a>
+    </div>
+</div>
+
+
+<style>
+    .admin-authors-list {
+        width: 100vw;
+        height: 100%;
+        max-height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    .container {
+        padding: 100px 150px;
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+
+    .small-author-card {
+        width: 180px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #d3d3d3;
+    }
+
+        .small-author-card > a {
+            color: black;
+            text-decoration: none;
+        }
+
+            .small-author-card > a:hover {
+                color: black;
+            }
+</style>
+
+@code {
+
+    private List<Author> authors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authors = await AS.GetAuthorsFromDBAsync();
+    }
+
+    private void RemoveAuthor(Author author)
+    {
+        AS.RemoveAuthorAsync(author).GetAwaiter().OnCompleted(async () =>
+        {
+            authors = await AS.GetAuthorsFromDBAsync();
+            StateHasChanged();
+        });
+    }
+}

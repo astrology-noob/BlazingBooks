@@ -23,16 +23,11 @@
 
     List<Book> books { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        books = await GetBooksByAuthorAsync(authorName);
-    }
-
-    private async Task<List<Book>> GetBooksByAuthorAsync(string authorName)
+    protected override async Task OnParametersSetAsync()
     {
         Task<Author> authorGettingTask = AS.GetAuthorByName(authorName);
         Author author = await authorGettingTask;
         authorGettingTask.Wait();
-        return await BS.GetBooksByAuthor(author);
+        books = await BS.GetBooksByAuthor(author);
     }
 }

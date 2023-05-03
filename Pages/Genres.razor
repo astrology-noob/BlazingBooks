@@ -20,6 +20,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        genres = await GS.GetGenresFromDBAsync();
+        genres = await GS.GetGenreNames();
     }
 }

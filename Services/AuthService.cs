@@ -2,8 +2,8 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using BlazingBooks.Data;
+using Blazored.LocalStorage;
 
 namespace BlazingBooks.Services
 {
@@ -11,15 +11,15 @@ namespace BlazingBooks.Services
     {
         private readonly HttpClient _httpClient;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
-        private readonly ProtectedSessionStorage _sessionStorage;
+        private readonly ILocalStorageService _localStorage;
 
         public AuthService(HttpClient httpClient,
                            AuthenticationStateProvider authenticationStateProvider,
-                           ProtectedSessionStorage sessionStorage)
+                           ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
             _authenticationStateProvider = authenticationStateProvider;
-            _sessionStorage = sessionStorage;
+            _localStorage = localStorage;
         }
 
         public async Task<RegisterResult> Register(UserData userData)
@@ -40,7 +40,7 @@ namespace BlazingBooks.Services
                 return loginResult;
             }
 
-            await _sessionStorage.SetAsync("authToken", loginResult.Token);
+            await _localStorage.SetItemAsync("authToken", loginResult.Token);
             ((ApiAuthStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginResult.Token);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
 
@@ -49,7 +49,7 @@ namespace BlazingBooks.Services
 
         public async Task Logout()
         {
-            await _sessionStorage.DeleteAsync("authToken");
+            await _localStorage.RemoveItemAsync("authToken");
             ((ApiAuthStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }

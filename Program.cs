@@ -3,7 +3,6 @@ using BlazingBooks.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -16,7 +15,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<AppDBContext>(options =>
               options.UseSqlServer(
-                  builder.Configuration.GetConnectionString("AppDBContext")));
+                  builder.Configuration.GetConnectionString("AppDBContext")).EnableSensitiveDataLogging());
 
 
 //builder.Services.AddDefaultIdentity<IdentityUser>()

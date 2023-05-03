@@ -5,15 +5,12 @@
     <div class="book-info">
         <span class="title">@book.Title</span>
         <div class="authors">
-            @foreach (var author in book.Authors)
-            {
-                <span class="author">@author.Name</span>
-            }
+            @(string.Join(", ", book.Authors.Select(a => a.Name).ToList()))
         </div>
         <div class="genres">
             @foreach (var genre in book.Genres)
             {
-                <span class="genre"><a href="/genres/@genre.Name">@genre.Name</a></span>
+                <span class="genre"><a @onclick:stopPropagation="true" href="/genres/@genre.Name">@genre.Name</a></span>
             }
         </div>
         <div class="buy-book">

@@ -1,5 +1,7 @@
 namespace BlazingBooks.Data;
 
+
+// todo: привязать заказ к пользователю
 public class OrderState
 {
     public Order Order { get; private set; } = new Order();

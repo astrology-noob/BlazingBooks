@@ -23,16 +23,11 @@
 
     List<Book> books { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        books = await GetBooksByGenreAsync(genreName);
-    }
-
-    private async Task<List<Book>> GetBooksByGenreAsync(string genreName)
+    protected override async Task OnParametersSetAsync()
     {
         Task<Genre> genreGettingTask = GS.GetGenreByName(genreName);
         Genre genre = await genreGettingTask;
         genreGettingTask.Wait();
-        return await BS.GetBooksByGenre(genre);
+        books = await BS.GetBooksByGenre(genre);
     }
 } 

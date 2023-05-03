@@ -1,0 +1,47 @@
+﻿@page "/admin/authors/add"
+@attribute [Authorize(Roles = "Admin")]
+@layout TopBarLayout
+@using BlazingBooks.Services
+@inject AuthorService AS
+
+<div class="container">
+    <form @onsubmit="AddAuthor">
+        <div class="form-group">
+            <label for="name">
+                Name:
+                <input type="text" class="form-control" name="name" @bind-value="author.Name">
+            </label>
+            <input type="submit" class="btn-primary" value="Add"/>
+        </div>
+    </form>
+</div>
+
+<style>
+    .container {
+        width: 100vw;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    form {
+        width: 300px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+@code {
+    private Author author { get; set; } = new();
+
+    private async void AddAuthor()
+    {
+        await AS.AddAuthorAsync(author);
+        author = new();
+        StateHasChanged();
+    }
+}
