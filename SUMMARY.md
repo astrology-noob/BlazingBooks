@@ -1,22 +1,26 @@
 # Table of contents
 
-* [👋 Welcome to A Product](README.md)
+* [👋 Знакомство с Blazing Books](README.md)
 
-## Overview
+## Введение
 
-* [💡 What we do](overview/what-we-do.md)
-* [✨ Our Features](overview/our-features.md)
+* [💡 Как появился проект](vvedenie/kak-poyavilsya-proekt.md)
+* [🛠 Установка](vvedenie/ustanovka/README.md)
+  * [📝 Setting permissions](vvedenie/ustanovka/setting-permissions.md)
+  * [🧑 Inviting Members](vvedenie/ustanovka/inviting-members.md)
+* [✨ Функционал](vvedenie/funkcional.md)
 
-## Product Guides
+## Туториалы
 
-* [📪 Making a post](product-guides/making-a-post.md)
-* [📎 Understanding Projects](product-guides/understanding-projects.md)
+* [📎 Просмотр списка книг](tutorialy/prosmotr-spiska-knig.md)
+* [Авторизация](tutorialy/avtorizaciya.md)
+* [📪 Покупка книги](tutorialy/pokupka-knigi.md)
+* [Создание книги](tutorialy/sozdanie-knigi.md)
 
-## Fundamentals
+## Спецификация
 
-* [🛠 Getting set up](fundamentals/getting-set-up/README.md)
-  * [📝 Setting permissions](fundamentals/getting-set-up/setting-permissions.md)
-  * [🧑 Inviting Members](fundamentals/getting-set-up/inviting-members.md)
+* [Модели базы данных](specifikaciya/modeli-bazy-dannykh.md)
+* [Система авторизации](specifikaciya/sistema-avtorizacii.md)
 
 ## Use Cases
 
